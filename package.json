@@ -1,7 +1,7 @@
 {
   "name": "load-module-pkg",
   "description": "Load the package.json for a module currently installed in node_modules, or at the given cwd.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "homepage": "https://github.com/jonschlinkert/load-module-pkg",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/load-module-pkg",
