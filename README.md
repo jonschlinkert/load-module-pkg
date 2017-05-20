@@ -1,52 +1,134 @@
-# load-module-pkg [![NPM version](https://badge.fury.io/js/load-module-pkg.svg)](http://badge.fury.io/js/load-module-pkg)  [![Build Status](https://travis-ci.org/jonschlinkert/load-module-pkg.svg)](https://travis-ci.org/jonschlinkert/load-module-pkg) 
+# load-module-pkg [![NPM version](https://img.shields.io/npm/v/load-module-pkg.svg?style=flat)](https://www.npmjs.com/package/load-module-pkg) [![NPM monthly downloads](https://img.shields.io/npm/dm/load-module-pkg.svg?style=flat)](https://npmjs.org/package/load-module-pkg) [![NPM total downloads](https://img.shields.io/npm/dt/load-module-pkg.svg?style=flat)](https://npmjs.org/package/load-module-pkg) [![Linux Build Status](https://img.shields.io/travis/jonschlinkert/load-module-pkg.svg?style=flat&label=Travis)](https://travis-ci.org/jonschlinkert/load-module-pkg)
 
-> Load the package.json for any project currently installed in node_modules.
+> Load the package.json for a module currently installed in node_modules, or at the given cwd.
 
-## Install with [npm](npmjs.org)
+## Install
 
-```bash
-npm i load-module-pkg --save
+Install with [npm](https://www.npmjs.com/):
+
+```sh
+$ npm install --save load-module-pkg
 ```
 
 ## Usage
 
 ```js
-var pkg = require('load-module-pkg');
-
-pkg('mocha').version;
-//=> 2.1.0
+var load = require('load-module-pkg');
 ```
 
-## Related projects
-* [load-pkg](https://github.com/jonschlinkert/load-pkg): Load the package.json in the base of the user's current project.
-* [list-deps](https://github.com/jonschlinkert/list-deps): List the dependencies in the package.json of the current project.
-* [cwd](https://github.com/jonschlinkert/cwd): Node.js util for easily getting the current working directory of a project based on package.json or the given path.
-* [resolve-dep](https://github.com/jonschlinkert/resolve-dep): Return an array of resolved filepaths for require-able local or named npm modules. Wildcard (glob) patterns may be used.
+### async
 
-## Running tests
-Install dev dependencies.
+```js
+load('kind-of', function(err, pkg) {
+  if (err) throw err;
+  console.log(pkg.name);
+  //=> 'kind-of'
+});
 
-```bash
-npm i -d && npm test
+// load package.json from cwd
+load('.', function(err, pkg) {
+  if (err) throw err;
+  console.log(pkg.name);
+  //=> 'load-module-pkg'
+});
 ```
 
+### sync
 
-## Contributing
-Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/jonschlinkert/load-module-pkg/issues)
+```js
+var pkg = load.sync('kind-of');
+console.log(pkg.name);
+//=> 'kind-of'
 
+var pkg = load.sync('./foo', {cwd: 'bar'});
+console.log(pkg.name);
+//=> 'my-module'
+```
 
-## Author
+## Options
+
+All options are passed to [resolve](https://github.com/substack/node-resolve), see the resolve docs for all available options and features.
+
+### options.cwd
+
+**Type**: `string`
+
+**Default**: `undefined`
+
+Alias for the `basedir` option passed to [resolve](https://github.com/substack/node-resolve).
+
+Additionally, `process.cwd()` is used as `basedir` _if the module name does not begin with `.` and `basedir` is undefined_.
+
+### options.expand
+
+**Type**: `boolean`
+
+**Default**: `true`
+
+By default, values in the resolved package.json are [normalized and expanded](https://github.com/jonschlinkert/expand-pkg). Where applicable, this converts string values (like `author` and `repository`) into objects, and adds missing properties when possible (like `homepage` if the `repository.url` can be used), making the data easier to use in other applications.
+
+You can disable this by setting this option to false:
+
+```js
+var load = require('load-module-pkg');
+
+var pkg = load.sync('mocha');
+console.log(pkg.repository.url);
+//=> git+https://github.com/mochajs/mocha.git
+console.log(pkg.href);
+//=> https://github.com/mochajs/mocha
+
+var pkg = load.sync('mocha', {expand: false});
+console.log(pkg.repository.url);
+//=> git+https://github.com/mochajs/mocha.git
+console.log(pkg.href);
+//=> undefined
+```
+
+See [expand-pkg](https://github.com/jonschlinkert/expand-pkg) to learn more about how values are expanded.
+
+## About
+
+### Related projects
+
+* [find-file-up](https://www.npmjs.com/package/find-file-up): Find a file, starting with the given cwd and recursively searching up one directory until… [more](https://github.com/jonschlinkert/find-file-up) | [homepage](https://github.com/jonschlinkert/find-file-up "Find a file, starting with the given cwd and recursively searching up one directory until it's found (or we run out of directories). Async and sync.")
+* [find-pkg](https://www.npmjs.com/package/find-pkg): Find the first directory with a package.json, recursing up, starting with the given directory. Similar… [more](https://github.com/jonschlinkert/find-pkg) | [homepage](https://github.com/jonschlinkert/find-pkg "Find the first directory with a package.json, recursing up, starting with the given directory. Similar to look-up but does not support globs and only searches for package.json. Async and sync.")
+* [load-pkg](https://www.npmjs.com/package/load-pkg): Loads the package.json from the root of the user's current project. | [homepage](https://github.com/jonschlinkert/load-pkg "Loads the package.json from the root of the user's current project.")
+
+### Contributing
+
+Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](../../issues/new).
+
+### Building docs
+
+_(This project's readme.md is generated by [verb](https://github.com/verbose/verb-generate-readme), please don't edit the readme directly. Any changes to the readme must be made in the [.verb.md](.verb.md) readme template.)_
+
+To generate the readme, run the following command:
+
+```sh
+$ npm install -g verbose/verb#dev verb-generate-readme && verb
+```
+
+### Running tests
+
+Running and reviewing unit tests is a great way to get familiarized with a library and its API. You can install dependencies and run tests with the following command:
+
+```sh
+$ npm install && npm test
+```
+
+### Author
 
 **Jon Schlinkert**
- 
-+ [github/jonschlinkert](https://github.com/jonschlinkert)
-+ [twitter/jonschlinkert](http://twitter.com/jonschlinkert) 
 
-## License
-Copyright (c) 2015 Jon Schlinkert  
-Released under the MIT license
+* [github/jonschlinkert](https://github.com/jonschlinkert)
+* [twitter/jonschlinkert](https://twitter.com/jonschlinkert)
+
+### License
+
+Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
+Released under the [MIT License](LICENSE).
 
 ***
 
-_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on March 03, 2015._
-<!-- deps:helper-related -->
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.6.0, on May 20, 2017._
