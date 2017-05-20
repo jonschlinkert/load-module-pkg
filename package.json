@@ -3,21 +3,12 @@
   "description": "Load the package.json for any project currently installed in node_modules.",
   "version": "0.1.0",
   "homepage": "https://github.com/jonschlinkert/load-module-pkg",
-  "author": {
-    "name": "Jon Schlinkert",
-    "url": "https://github.com/jonschlinkert"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/jonschlinkert/load-module-pkg.git"
-  },
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/load-module-pkg",
   "bugs": {
     "url": "https://github.com/jonschlinkert/load-module-pkg/issues"
   },
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/jonschlinkert/load-module-pkg/blob/master/LICENSE"
-  },
+  "license": "MIT",
   "files": [
     "index.js"
   ],
@@ -40,6 +31,7 @@
     "dependencies",
     "dependency",
     "json",
+    "load",
     "module",
     "modules",
     "node",
