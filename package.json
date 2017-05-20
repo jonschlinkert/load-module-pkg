@@ -1,6 +1,6 @@
 {
   "name": "load-module-pkg",
-  "description": "Load the package.json for any project currently installed in node_modules.",
+  "description": "Load the package.json for a module currently installed in node_modules, or at the given cwd.",
   "version": "0.1.0",
   "homepage": "https://github.com/jonschlinkert/load-module-pkg",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
@@ -20,11 +20,15 @@
     "test": "mocha"
   },
   "dependencies": {
-    "cwd": "^0.5.0"
+    "expand-pkg": "^0.1.8",
+    "extend-shallow": "^2.0.1",
+    "resolve": "^1.3.3"
   },
   "devDependencies": {
-    "mocha": "*",
-    "should": "*"
+    "gulp-format-md": "^0.1.12",
+    "kind-of": "^4.0.0",
+    "mocha": "^3.4.1",
+    "write-json": "^1.0.1"
   },
   "keywords": [
     "dep",
@@ -39,5 +43,29 @@
     "package",
     "package-json",
     "pkg"
-  ]
+  ],
+  "verb": {
+    "toc": false,
+    "layout": "default",
+    "tasks": [
+      "readme"
+    ],
+    "plugins": [
+      "gulp-format-md"
+    ],
+    "related": {
+      "list": [
+        "find-pkg",
+        "load-pkg",
+        "find-file-up"
+      ]
+    },
+    "lint": {
+      "reflinks": true
+    },
+    "reflinks": [
+      "expand-pkg",
+      "resolve"
+    ]
+  }
 }

@@ -7,21 +7,78 @@
 
 'use strict';
 
-var fs = require('fs');
-var cwd = require('cwd');
+var path = require('path');
+var Config = require('expand-pkg');
+var extend = require('extend-shallow');
+var resolve = require('resolve');
 
-module.exports = function (name, options) {
+module.exports = function(name, options, cb) {
+  if (typeof options === 'function') {
+    cb = options;
+    options = undefined;
+  }
+
+  if (typeof cb !== 'function') {
+    throw new Error('expected callback to be a function');
+  }
+  if (typeof name !== 'string') {
+    cb(new Error('load-module-pkg expects a string.'));
+    return;
+  }
+
+  var opts = extend({}, options);
+
+  if (opts.cwd && !opts.basedir) {
+    opts.basedir = path.resolve(opts.cwd);
+  }
+
+  if (name.charAt(0) !== '.' && !opts.basedir) {
+    opts.basedir = process.cwd();
+  }
+
+  resolve(name, opts, function(err, modulePath, pkg) {
+    if (err) {
+      cb(err);
+      return;
+    }
+
+    pkg.modulePath = modulePath;
+    if (opts.expand !== false) {
+      var config = new Config(opts);
+      pkg = config.expand(pkg);
+    }
+
+    cb(null, pkg);
+  });
+};
+
+module.exports.sync = function(name, options) {
   if (typeof name !== 'string') {
     throw new Error('load-module-pkg expects a string.');
   }
-  try {
-    var fp = cwd('node_modules', name, 'package.json');
-    // don't use require(), to avoid caching
-    return JSON.parse(fs.readFileSync(fp, 'utf8'));
-  } catch(err) {
-    if (options && options.strict) {
-      throw new Error(err);
-    }
+
+  var opts = extend({}, options);
+  var pkg = {};
+
+  if (!opts.basedir && opts.cwd) {
+    opts.basedir = path.resolve(opts.cwd);
   }
-  return {};
+
+  if (name.charAt(0) !== '.' && !opts.basedir) {
+    opts.basedir = process.cwd();
+  }
+
+  opts.packageFilter = function(data, modulePath) {
+    pkg = data;
+    pkg.modulePath = modulePath;
+    return pkg;
+  };
+
+  resolve.sync(name, opts);
+
+  if (opts.expand !== false) {
+    var config = new Config(opts);
+    pkg = config.expand(pkg);
+  }
+  return pkg;
 };
